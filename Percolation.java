@@ -1,5 +1,3 @@
-import edu.princeton.cs.algs4.StdRandom;
-import edu.princeton.cs.algs4.StdStats;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /**
@@ -14,7 +12,15 @@ public class Percolation {
      */
     private int[][] grid;
 
+    /**
+     * Union-Find object
+     */
     private WeightedQuickUnionUF uf;
+
+    /**
+     * Number of open sides
+     */
+    private int open;
 
     /**
      * Create n-by-n grid, with all sites blocked
@@ -24,6 +30,7 @@ public class Percolation {
         int vTop = n * n; //virtual-top index of node
         int vBottom = n * n + 1; //virtual-bottom index of node
         grid = new int[n][n];
+        open = 0;
         uf = new WeightedQuickUnionUF(n * n + 2); //+2 - virtual-top + virtual-bottom nodes
         //Create virtual-top and virtual-bottom
         for (int i = 0; i < n; i++) {
@@ -39,7 +46,24 @@ public class Percolation {
      * @param col column
      */
     public void open(int row, int col) {
+        if (isOpen(row, col)) return;
+        int curIndex = getIndex(row, col);
+        int n = grid.length;
+        //Check up
+        if (row - 1 > 0) {
+            if (isOpen(row - 1, col)) {
+                int upIndex = getIndex(row - 1, col);
+                if (!uf.connected(curIndex, upIndex)) {
+                    uf.union(curIndex, upIndex);
+                }
+            }
+        }
+        //Check down
+        if (row + 1 <= n) {
 
+        }
+        //Check left
+        //Check right
     }
 
     /**
@@ -60,7 +84,10 @@ public class Percolation {
      * @return is full?
      */
     public boolean isFull(int row, int col) {
-        return false;
+        int n = grid.length;
+        int vTop = n * n; //virtual-top index of node
+        int indexUf = getIndex(row, col);
+        return uf.connected(indexUf, vTop);
     }
 
     /**
@@ -68,7 +95,7 @@ public class Percolation {
      * @return number of open sites
      */
     public int numberOfOpenSites() {
-        return 0;
+        return open;
     }
 
     /**
@@ -77,7 +104,10 @@ public class Percolation {
      * @return does the system percolate?
      */
     public boolean percolates() {
-        return false;
+        int n = grid.length;
+        int vTop = n * n; //virtual-top index of node
+        int vBottom = n * n + 1; //virtual-bottom index of node
+        return uf.connected(vTop, vBottom);
     }
 
     /**
@@ -89,6 +119,8 @@ public class Percolation {
     private int getIndex(int row, int col) {
         return (row - 1) * grid.length + (col - 1);
     }
+
+
 
     /**
      * Test client
