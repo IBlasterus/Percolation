@@ -2,6 +2,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 /**
  * A model of percolation system
+ *
  * @author Oleksandr Chornyi (iblasterus@gmail.com)
  */
 public class Percolation {
@@ -24,6 +25,7 @@ public class Percolation {
 
     /**
      * Create n-by-n grid, with all sites blocked
+     *
      * @param n grid size
      */
     public Percolation(int n) {
@@ -42,32 +44,22 @@ public class Percolation {
     /**
      * Open site (row, col) if it is not open already
      * WeightedQuickUnionUF.union
+     *
      * @param row row
      * @param col column
      */
     public void open(int row, int col) {
         if (isOpen(row, col)) return;
-        int curIndex = getIndex(row, col);
-        int n = grid.length;
-        //Check up
-        if (row - 1 > 0) {
-            if (isOpen(row - 1, col)) {
-                int upIndex = getIndex(row - 1, col);
-                if (!uf.connected(curIndex, upIndex)) {
-                    uf.union(curIndex, upIndex);
-                }
-            }
-        }
-        //Check down
-        if (row + 1 <= n) {
-
-        }
-        //Check left
-        //Check right
+        check(row, col, "up");
+        check(row, col, "down");
+        check(row, col, "left");
+        check(row, col, "right");
+        grid[row - 1][col - 1] = 1;
     }
 
     /**
      * Is site (row, col) open?
+     *
      * @param row row
      * @param col column
      * @return is open?
@@ -79,6 +71,7 @@ public class Percolation {
     /**
      * Is site (row, col) full?
      * WeightedQuickUnionUF.connected
+     *
      * @param row row
      * @param col column
      * @return is full?
@@ -92,6 +85,7 @@ public class Percolation {
 
     /**
      * Number of open sites
+     *
      * @return number of open sites
      */
     public int numberOfOpenSites() {
@@ -101,6 +95,7 @@ public class Percolation {
     /**
      * Does the system percolate?
      * WeightedQuickUnionUF.connected
+     *
      * @return does the system percolate?
      */
     public boolean percolates() {
@@ -112,6 +107,7 @@ public class Percolation {
 
     /**
      * Get UF-index of cell
+     *
      * @param row row
      * @param col column
      * @return UF index
@@ -120,10 +116,57 @@ public class Percolation {
         return (row - 1) * grid.length + (col - 1);
     }
 
+    /**
+     * Check nearby cell and make uf-connect with it
+     *
+     * @param row  row
+     * @param col  column
+     * @param side up/down/left/right
+     */
+    private void check(int row, int col, String side) {
+        int n = grid.length;
+        int curIndex = getIndex(row, col);
+        switch (side) {
+            case "up":
+                if (row - 1 <= 0) {
+                    return;
+                } else {
+                    row--;
+                }
+                break;
+            case "down":
+                if (row + 1 > n) {
+                    return;
+                } else {
+                    row++;
+                }
+                break;
+            case "left":
+                if (col - 1 <= 0) {
+                    return;
+                } else {
+                    col--;
+                }
+                break;
+            case "right":
+                if (col + 1 > n) {
+                    return;
+                } else {
+                    col++;
+                }
+        }
+        int cellIndex = getIndex(row, col);
+        if (isOpen(row, col)) {
+            if (!uf.connected(curIndex, cellIndex)) {
+                uf.union(curIndex, cellIndex);
+            }
+        }
+    }
 
 
     /**
      * Test client
+     *
      * @param args arguments
      */
     public static void main(String[] args) {
