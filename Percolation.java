@@ -11,12 +11,12 @@ public class Percolation {
      * Grid
      * row, column
      */
-    private int[][] grid;
+    private boolean[][] grid;
 
     /**
      * Union-Find object
      */
-    private WeightedQuickUnionUF uf;
+    private final WeightedQuickUnionUF uf;
 
     /**
      * Number of open sides
@@ -30,15 +30,15 @@ public class Percolation {
      */
     public Percolation(int n) {
         if (n <= 0) throw new IllegalArgumentException("n too small");
-        int vTop = n * n; //virtual-top index of node
-        int vBottom = n * n + 1; //virtual-bottom index of node
-        grid = new int[n][n];
+        int vTop = n * n; // virtual-top index of node
+        int vBottom = n * n + 1; // virtual-bottom index of node
+        grid = new boolean[n][n];
         open = 0;
-        uf = new WeightedQuickUnionUF(n * n + 2); //+2 - virtual-top + virtual-bottom nodes
-        //Create virtual-top and virtual-bottom
+        uf = new WeightedQuickUnionUF(n * n + 2); // +2 - virtual-top + virtual-bottom nodes
+        // Create virtual-top and virtual-bottom
         for (int i = 0; i < n; i++) {
-            uf.union(vTop, i); //Virtual-top
-            uf.union(vBottom, n * n - (i + 1)); //Virtual-bottom
+            uf.union(vTop, i); // Virtual-top
+            uf.union(vBottom, n * n - (i + 1)); // Virtual-bottom
         }
     }
 
@@ -56,7 +56,7 @@ public class Percolation {
         check(row, col, "down");
         check(row, col, "left");
         check(row, col, "right");
-        grid[row - 1][col - 1] = 1;
+        grid[row - 1][col - 1] = true;
         open++;
     }
 
@@ -69,7 +69,7 @@ public class Percolation {
      */
     public boolean isOpen(int row, int col) {
         checkRowCol(row, col);
-        return grid[row - 1][col - 1] == 1;
+        return grid[row - 1][col - 1];
     }
 
     /**
@@ -82,8 +82,9 @@ public class Percolation {
      */
     public boolean isFull(int row, int col) {
         checkRowCol(row, col);
+        if (!isOpen(row, col)) return false;
         int n = grid.length;
-        int vTop = n * n; //virtual-top index of node
+        int vTop = n * n; // virtual-top index of node
         int indexUf = getIndex(row, col);
         return uf.connected(indexUf, vTop);
     }
@@ -105,8 +106,8 @@ public class Percolation {
      */
     public boolean percolates() {
         int n = grid.length;
-        int vTop = n * n; //virtual-top index of node
-        int vBottom = n * n + 1; //virtual-bottom index of node
+        int vTop = n * n; // virtual-top index of node
+        int vBottom = n * n + 1; // virtual-bottom index of node
         return uf.connected(vTop, vBottom);
     }
 
@@ -186,6 +187,6 @@ public class Percolation {
      * @param args arguments
      */
     public static void main(String[] args) {
-
+        System.out.println("Test");
     }
 }

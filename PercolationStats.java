@@ -10,22 +10,22 @@ public class PercolationStats {
     /**
      * Sample mean of percolation threshold
      */
-    private double mean;
+    private final double mean;
 
     /**
      * Sample standard deviation of percolation threshold
      */
-    private double stddev;
+    private final double stddev;
 
     /**
      * Low  endpoint of 95% confidence interval
      */
-    private double confidenceLo;
+    private final double confidenceLo;
 
     /**
      * high endpoint of 95% confidence interval
      */
-    private double confidenceHi;
+    private final double confidenceHi;
 
     /**
      * Perform trials independent experiments on an n-by-n grid
@@ -48,8 +48,9 @@ public class PercolationStats {
         }
         mean = StdStats.mean(open);
         stddev = StdStats.stddev(open);
-        confidenceLo = mean - (1.96 * stddev / Math.sqrt(trials));
-        confidenceHi = mean + (1.96 * stddev / Math.sqrt(trials));
+        final double N = 1.96;
+        confidenceLo = mean - (N * stddev / Math.sqrt(trials));
+        confidenceHi = mean + (N * stddev / Math.sqrt(trials));
     }
 
     /**
